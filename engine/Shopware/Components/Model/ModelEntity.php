@@ -39,13 +39,17 @@ abstract class ModelEntity
      * $model->fromArray($data);
      * $model->setShipping($shippingModel->fromArray($shippingData));
      *
-     * @param array $array
-     * @param array $fillable optional property whitelist for mass-assignment
+     * @param array|\ArrayAccess $array
+     * @param array              $fillable optional property whitelist for mass-assignment
      *
      * @return ModelEntity
      */
-    public function fromArray(array $array = [], array $fillable = [])
+    public function fromArray($array = [], array $fillable = [])
     {
+        if (!is_array($array) && !($array instanceof \ArrayAccess)) {
+            throw new \InvalidArgumentException('Passed array property has to be an array or implement ArrayAccess.');
+        }
+        
         foreach ($array as $key => $value) {
             if (count($fillable) && !in_array($key, $fillable)) {
                 continue;
@@ -125,7 +129,7 @@ abstract class ModelEntity
         }
 
         //if the parameter is no array, return
-        if (!is_array($data) || empty($data)) {
+        if ((!is_array($data) && !($data instanceof \ArrayAccess)) || empty($data)) {
             return $this;
         }
 
@@ -194,7 +198,7 @@ abstract class ModelEntity
             return $this;
         }
         //if no array passed or if false passed, return
-        if (!is_array($data)) {
+        if (!is_array($data) && !($data instanceof \ArrayAccess)) {
             return $this;
         }
 
@@ -300,7 +304,7 @@ abstract class ModelEntity
         }
 
         //if the parameter is no array, return
-        if (!is_array($data) || empty($data)) {
+        if ((!is_array($data) && !($data instanceof \ArrayAccess)) || empty($data)) {
             return $this;
         }
 
